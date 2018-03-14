@@ -1,12 +1,5 @@
 # Flask and Data Science Workshop
 #### Seattle Building Intelligent Applications Meetup 
-
-Aaron Lichtner, Data Scientist @ Nordstrom
-
-*September 6, 2017*
-
-*Metis Seattle*
-
 ---
 
 Flask is a web framework for Python. In other words, it's a way to use python to create websites, web apps and APIs.

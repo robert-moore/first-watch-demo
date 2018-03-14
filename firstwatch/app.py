@@ -20,6 +20,8 @@ def home():
 def hospitalreport():
     df = pd.read_csv('data/transfers_incounty_cleaned_2017-18.csv')
 
+    dates = df.date.unique()
+
     hospital_name = request.args.get('hospital')
 
     d = fw.data_last_N_events(df,200)
@@ -28,6 +30,9 @@ def hospitalreport():
 
 @app.route('/hospital-data/<string:hospital>/<string:date>')
 def hospital_data(hospital, date):
+    
+
+    
     return hospital + date
 
 

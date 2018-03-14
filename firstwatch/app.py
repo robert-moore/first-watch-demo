@@ -24,9 +24,10 @@ def hospitalreport():
 
     hospital_name = request.args.get('hospital')
 
+    dates = df.date.dt.date
     d = fw.data_last_N_events(df,200)
 
-    return render_template("startertemplate.html",hospital=hospital_name)
+    return render_template("startertemplate.html",dates=dates)
 
 @app.route('/hospital-data/<string:hospital>/<string:date>')
 def hospital_data(hospital, date):

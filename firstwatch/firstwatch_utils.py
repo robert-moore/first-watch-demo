@@ -67,7 +67,7 @@ def data_transfers_compare(df):
             toc_over = d_.toc_over.mean()
 
             if hospital == 'other':
-                volume_per_week = d_.shape[0] / 6 # there are a total of 6 hospitals in contra costa county
+                volume_per_week = d_.shape[0] / 7 # there are a total of 6 hospitals in contra costa county
 
             else:
                 volume_per_week = d_.shape[0]

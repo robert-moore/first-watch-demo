@@ -19,7 +19,7 @@ def home():
 @app.route('/hospitalreport')
 def hospitalreport():
     global df 
-    df = pd.read_csv('data/transfers_incounty_cleaned_2017-18.csv')
+    df = pd.read_csv('data/transfers_cleaned_2017-18.csv')
 
     dates = df.date.unique()
 
@@ -33,14 +33,15 @@ def hospitalreport():
 @app.route('/hospital-data/<string:hospital>/<string:date>')
 def hospital_data(hospital, date):
     global df
-    
+
     # change the data to be 'ref hospital' vs. 'other'
     dfh = fw.select_hospital(df,hospital)
     # compute trans_df 
-
+    dft = fw.data_transfers_compare(df,date)
     #create output dictionary for viz
+    data_dict = fw.df_to_dict(dft)
     
-    return hospital + date
+    return data_dict
 
 
 # script initialization

@@ -9,7 +9,7 @@ def select_hospital(df,hospital):
     
     dfh = df.copy()
 
-    dfh.loc[df.Hospital != hospital,'Hospital'] = 'other'
+    dfh.loc[df.hospital != hospital,'hospital'] = 'other'
     
     return dfh
 
@@ -23,51 +23,56 @@ def data_last_N_events(df,n):
 
 #################################
 
-def data_transfers_compare(df):
+def data_transfers_compare(df,date):
     
+    #convert date into datetime object
+    date = pd.to_datetime(date)
     
+    #convert dates back into datetime objects
+    df.date_day = pd.to_datetime(df.date_day)
+
     #last 7 days
-    en = df.tail(1).date.values[0]
+    en = date
     st =  en - pd.Timedelta(days=7)
 
-    last7 = df[((df.date >= st) & (df.date <=en))]
+    last7 = df[((df.date_day >= st) & (df.date_day <=en))]
 
     #previous 7 days
     en = st
     st =  en - pd.Timedelta(days=7)
 
-    prev7 = df[((df.date >= st) & (df.date <=en))]
+    prev7 = df[((df.date_day >= st) & (df.date_day <=en))]
 
     #week 30 days ago
-    en = df.tail(1).date.values[0] - pd.Timedelta(days=30)
+    en = date - pd.Timedelta(days=30)
     st = en - pd.Timedelta(days=7)
 
-    prev30 = df[((df.date >= st) & (df.date <=en))]
+    prev30 = df[((df.date_day >= st) & (df.date_day <=en))]
 
     #same week a year ago
-    en = df.tail(1).date.values[0] - pd.Timedelta(days=365)
+    en = date - pd.Timedelta(days=365)
     st = en - pd.Timedelta(days=7)
 
-    lastyear7 = df[((df.date >= st) & (df.date <=en))]
+    lastyear7 = df[((df.date_day >= st) & (df.date_day <=en))]
     
     '''
     create trans_df dataframe
     '''
     trans_df = pd.DataFrame()
 
-    epochs = ['last_7','prev_7','prev30','year_ago']
+    epochs = ['this_wk','prev_wk','prev_month','prev_year']
     datas = [last7,prev7,prev30,lastyear7]
 
-    for hospital in df.Hospital.unique():
+    for hospital in df.hospital.unique():
 
         for t,d in zip(epochs,datas):
 
-            d_ = d[d.Hospital == hospital]
+            d_ = d[d.hospital == hospital]
 
             toc_over = d_.toc_over.mean()
 
             if hospital == 'other':
-                volume_per_week = d_.shape[0] / 7 # there are a total of 6 hospitals in contra costa county
+                volume_per_week = d_.shape[0] / 7 # there are a total of 8 hospitals in contra costa county
 
             else:
                 volume_per_week = d_.shape[0]
@@ -80,10 +85,10 @@ def data_transfers_compare(df):
                                             'volume_per_week': volume_per_week},index=[0]))
 
 
-    for hospital in df.Hospital.unique():
+    for hospital in df.hospital.unique():
         d_ = trans_df[trans_df.hospital == hospital]
 
-        diffs = d_[d_.time=='last_7'].toc_under - d_.toc_under
+        diffs = d_[d_.time=='this_wk'].toc_under - d_.toc_under
 
         trans_df.loc[trans_df.hospital == hospital,'toc_diff'] = diffs*100
 
@@ -91,3 +96,24 @@ def data_transfers_compare(df):
 
     
     return trans_df
+
+
+##################################
+
+def df_to_dict(df):
+
+    data_dict = {'fraction_data':
+                    {'ref': tdf[((tdf.hospital != 'other') & (tdf.time == 'this_wk'))].toc_under.values[0], 
+                    'others': tdf[((tdf.hospital == 'other') & (tdf.time == 'this_wk'))].toc_under.values[0]},
+                'changes':
+                    {'year':
+                        {'ref':tdf[((tdf.hospital != 'other') & (tdf.time == 'prev_year'))].toc_diff.values[0],
+                        'others': tdf[((tdf.hospital == 'other') & (tdf.time == 'prev_year'))].toc_diff.values[0]},
+                    'month':
+                        {'ref':tdf[((tdf.hospital != 'other') & (tdf.time == 'prev_month'))].toc_diff.values[0],
+                        'others': tdf[((tdf.hospital == 'other') & (tdf.time == 'prev_month'))].toc_diff.values[0]},
+                    'week':
+                        {'ref':tdf[((tdf.hospital != 'other') & (tdf.time == 'prev_wk'))].toc_diff.values[0],
+                        'others': tdf[((tdf.hospital == 'other') & (tdf.time == 'prev_wk'))].toc_diff.values[0]}}
+                }
+    return data_dict

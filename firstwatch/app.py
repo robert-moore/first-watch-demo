@@ -17,7 +17,6 @@ def home():
 
 # main hospital report page
 @app.route('/hospitalreport')
-
 def hospitalreport():
     df = pd.read_csv('data/transfers_incounty_cleaned_2017-18.csv')
 
@@ -27,7 +26,9 @@ def hospitalreport():
 
     return render_template("startertemplate.html",hospital=hospital_name)
 
-
+@app.route('/hospital-data/<string:hospital>/<string:date>')
+def hospital_data(hospital, date):
+    return hospital + date
 
 
 # script initialization

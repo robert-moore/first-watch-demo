@@ -2,6 +2,6 @@
 Python/Javascript apps for exploratory analyses 
 
 ## Installing python environment
-run `conda env create -f environment.yml`
+run `conda create --name madlibs --file spec-file.txt`
 
 to activate environment: `source activate madlibs`

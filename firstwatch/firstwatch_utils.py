@@ -101,7 +101,7 @@ def data_transfers_compare(df,date):
 ##################################
 
 def df_to_dict(tdf):
-
+    print(tdf)
     data_dict = {'fraction_data':
                     {'ref': tdf[((tdf.hospital != 'other') & (tdf.time == 'this_wk'))].toc_under.values[0], 
                     'others': tdf[((tdf.hospital == 'other') & (tdf.time == 'this_wk'))].toc_under.values[0]},

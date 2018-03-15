@@ -15,11 +15,19 @@ def select_hospital(df,hospital):
 
 #################################
 
-def data_last_N_events(df,n):
+def last_N_events_dict(df,hospital,end_date,days=7):
     
-    d = df.tail(n)
+    en = pd.to_datetime(end_date)
+    st = en - pd.Timedelta(days=days)
     
-    return d[['date','toc_mins']]
+    df.date_day = pd.to_datetime(df.date_day)
+    
+    d = df[((df.hospital == hospital) & (df.date_day >= st) & (df.date_day <=en))]
+    
+    d_dict = {'transfer_times':d.toc_mins.values,'times': d.date.values}
+    
+
+    return d_dict
 
 #################################
 

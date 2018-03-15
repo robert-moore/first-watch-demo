@@ -6,85 +6,101 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="">
-    <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
     <title>LiveStories Hospital Report</title>
 
-    <!-- Bootstrap core CSS -->
+    <script src="../../static/vendor/d3/d3.v4.min.js"></script>
+
     <link href="../../static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <script src="../../static/js/scatter-vis.js"></script>
+    <script src="../../static/js/changes-vis.js"></script>
+    <script src="../../static/js/fractions-vis.js"></script>
 
-    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-    <!--<script src="../../assets/js/ie-emulation-modes-warning.js"></script>! -->
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
     <script>
         console.log("in script")
         var changesData = {{ changes|tojson }}
         var fractionsData = {{ fractions|tojson }}
         var scatterData = {{ scatter|tojson }}
         var eventData = {{ eventdata|tojson }}
+        var inCountyHospitals = {{ in_county_hospitals|tojson }}
+        var outOfCountyHospitals = {{ out_county_hospitals|tojson }}
+        
     </script>
 
 </head>
 
 <body>
 
-
-<nav class="navbar navbar-inverse navbar-fixed-top">
-
-</nav>
-
-
-
-<div class="container">
-    <select id="hospital" name="hospital" class="selectpicker">
-        <optgroup label="Hospitals within Contra Costa">
-            <option>Contra Costa Regional Medical Center</option>
-            <option>John Muir Medical Center - Concord</option>
-            <option>John Muir Medical Center - Walnut Creek</option>
-            <option>Kaiser Medical Center - Richmond</option>
-            <option>Kaiser Medical Center - Walnut Creek</option>
-            <option>PES</option>
-            <option>San Ramon Regional Medical Center</option>
-            <option>Sutter Delta Memorial Hospital</option>
-        </optgroup>
-        <optgroup label="Hospitals outside Contra Costa">
-        </optgroup>
-    </select>
-
-    <div id="navbar" class="collapse navbar-collapse">
-        <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-        </ul>
-    </div><!--/.nav-collapse -->
-
-    <div id="scatter" data={{ changes|tojson }}></div>
-    <div id="fraction"></div>
-    <div id="changes"></div>
-
-    <div class="first-watch">
-        <h1>Hospital Report for {{hospital}}</h1>
-        <p class="lead">blahblahblah.</p>
+<div>
+    <div class="controls">
+        <select id="facility-selector" name="hospital" class="selectpicker">
+            <optgroup label="Hospitals within Contra Costa" id="in-county-hospitals">
+            </optgroup>
+            <optgroup label="Hospitals outside Contra Costa" id="out-of-county-hospitals">
+            </optgroup>
+        </select>
+        <b>Date: </b>
+        <select id="date-selector" style="font-size:1em;margin:0px 5px 0 0px;"></select>
+        <b>Time: </b><span id="time">00:00</span>
     </div>
+</div>
 
-</div><!-- /.container -->
-
-
+<div id="replay-vis">
+    <div id="hospital-flow">
+            <svg id="flow-chart-canvas">
+                    <defs>
+                        <g id="red-red" fill-rule="nonzero">
+                            <g id="medical" transform="translate(11.000000, 27.000000)">
+                                <path d="M105.481551,25.0740039 C103.914473,23.1301445 101.540747,22 99.0302686,22 L79,22 L79,91 L98.1999674,91 C98.1999674,83.1148633 104.648803,76.7240078 112.600011,76.7240078 C120.553666,76.7240078 127.000054,83.1148633 127.000054,91 L133.600052,91 C136.583318,91 139,88.6017109 139,85.6441445 L139,51.1465703 C139,48.1890039 136.583318,45.7931406 133.600052,45.7931406 L123.508113,45.7931406 C122.682434,45.7931406 121.899982,45.4195703 121.383967,44.7794336 L105.481551,25.0740039 Z" id="Shape" fill="#EE705C"></path>
+                                <path d="M79,63 L0,63 L0,6.96382823 C0,3.11848847 3.08097559,0 6.88005904,0 L72.119941,0 C75.9190244,0 79,3.11848847 79,6.96382823 L79,63 Z" id="Shape" fill="#E6E6E6"></path>
+                                <g id="Group" transform="translate(12.000000, 76.000000)" fill="#5B5B5B">
+                                    <path d="M115.962245,14.9273832 C115.962245,23.1297196 109.475274,29.7776636 101.471547,29.7776636 C93.4678208,29.7776636 86.9808491,23.1297196 86.9808491,14.9273832 C86.9808491,6.72504673 93.4678208,0.0771028037 101.471547,0.0771028037 C109.475274,0.0771028037 115.962245,6.7253271 115.962245,14.9273832" id="Shape"></path>
+                                    <path d="M29.0188774,14.9273832 C29.0188774,23.1297196 22.5319057,29.7776636 14.5281792,29.7776636 C6.52445283,29.7776636 0.0374811321,23.1297196 0.0374811321,14.9273832 C0.0374811321,6.72504673 6.52445283,0.0771028037 14.5281792,0.0771028037 C22.5319057,0.0771028037 29.0188774,6.7253271 29.0188774,14.9273832" id="Shape"></path>
+                                </g>
+                                <path d="M0,63 L0,88.002596 C0,90.7626946 2.14266246,93 4.785397,93 L11.9697298,93 C11.9697298,84.7148899 18.3998867,77.9998584 26.3335141,77.9998584 C34.2671415,77.9998584 40.6972984,84.7148899 40.6972984,93 L79,93 L79,63 L0,63 Z" id="Shape" fill="#A14B3D"></path>
+                                <g id="Group" transform="translate(20.000000, 87.000000)" fill="#B2B2B2">
+                                    <path d="M9.59634181,5.06694444 C9.59634181,7.77638889 7.47601695,9.97111111 4.85841808,9.97111111 C2.24081921,9.97111111 0.12049435,7.77638889 0.12049435,5.06694444 C0.12049435,2.3575 2.24081921,0.162777778 4.85841808,0.162777778 C7.47601695,0.162777778 9.59634181,2.3575 9.59634181,5.06694444" id="Shape"></path>
+                                    <path d="M94.879774,5.06694444 C94.879774,7.77638889 92.7594492,9.97111111 90.1418503,9.97111111 C87.5242514,9.97111111 85.4039266,7.77638889 85.4039266,5.06694444 C85.4039266,2.3575 87.5242514,0.162777778 90.1418503,0.162777778 C92.7594492,0.162777778 94.879774,2.3575 94.879774,5.06694444" id="Shape"></path>
+                                </g>
+                                <path d="M105.060582,24.9530375 C103.496218,23.0856717 101.124161,22 98.618302,22 L93,22 L93,34.1896624 C93,36.2947212 94.7871851,38 96.9939583,38 L116,38 L105.060582,24.9530375 Z" id="Shape" fill="#E6E6E6"></path>
+                                <path d="M43.9471364,28 C43.0555068,28 42.3327858,27.2526408 42.3327858,26.3299822 L42.3327858,19.6700178 C42.3327858,18.7476424 41.6103386,18 40.7184352,18 L34.2804697,18 C33.3888401,18 32.6661192,18.7473592 32.6661192,19.6700178 L32.6661192,26.3299822 C32.6661192,27.2523576 31.9436719,28 31.0517686,28 L24.6143506,28 C23.722721,28 23,28.7473592 23,29.6700178 L23,36.3299822 C23,37.2523576 23.7224472,38 24.6143506,38 L31.0523161,38 C31.9439457,38 32.6666667,38.7473592 32.6666667,39.6700178 L32.6666667,46.3299822 C32.6666667,47.2523576 33.3891139,48 34.2810172,48 L40.7189828,48 C41.6106124,48 42.3333333,47.2526408 42.3333333,46.3299822 L42.3333333,39.6700178 C42.3333333,38.7476424 43.0557805,38 43.9476839,38 L50.3856494,38 C51.277279,38 52,37.2526408 52,36.3299822 L52,29.6700178 C51.9994525,28.7473592 51.2770053,28 50.3851019,28 L43.9471364,28 Z" id="Shape" fill="#EF715D"></path>
+                                <path d="M139,60 L97.4445521,60 C96.0951749,60 95,60.8939737 95,62 C95,63.1060263 96.0951749,64 97.4445521,64 L139,64 L139,60 Z" id="Shape" fill="#A14B3D"></path>
+                            </g>
+                        </g>
+                        <g id="blue-blue" fill-rule="nonzero">
+                            <g id="medical" transform="translate(11.000000, 27.000000)">
+                                <path d="M121.383967,44.7794336 L105.481551,25.0740039 C103.914473,23.1301445 101.540747,22 99.0302686,22 L79,22 L79,91 L98.1999674,91 C98.1999674,83.1148633 104.648803,76.7240078 112.600011,76.7240078 C120.553666,76.7240078 127.000054,83.1148633 127.000054,91 L133.600052,91 C136.583318,91 139,88.6017109 139,85.6441445 L139,51.1465703 C139,48.1890039 136.583318,45.7931406 133.600052,45.7931406 L123.508113,45.7931406 C122.682434,45.7931406 121.899982,45.4195703 121.383967,44.7794336" id="Shape" fill-opacity="0.963201993" fill="#5CBCDC"></path>
+                                <path d="M79,63 L0,63 L0,6.96382823 C0,3.11848847 3.08097559,0 6.88005904,0 L72.119941,0 C75.9190244,0 79,3.11848847 79,6.96382823 L79,63 Z" id="Shape" fill="#E6E6E6"></path>
+                                <g id="Group" transform="translate(12.000000, 76.000000)" fill="#5B5B5B">
+                                    <path d="M115.962245,14.9273832 C115.962245,23.1297196 109.475274,29.7776636 101.471547,29.7776636 C93.4678208,29.7776636 86.9808491,23.1297196 86.9808491,14.9273832 C86.9808491,6.72504673 93.4678208,0.0771028037 101.471547,0.0771028037 C109.475274,0.0771028037 115.962245,6.7253271 115.962245,14.9273832" id="Shape"></path>
+                                    <path d="M29.0188774,14.9273832 C29.0188774,23.1297196 22.5319057,29.7776636 14.5281792,29.7776636 C6.52445283,29.7776636 0.0374811321,23.1297196 0.0374811321,14.9273832 C0.0374811321,6.72504673 6.52445283,0.0771028037 14.5281792,0.0771028037 C22.5319057,0.0771028037 29.0188774,6.7253271 29.0188774,14.9273832" id="Shape"></path>
+                                </g>
+                                <path d="M0,63 L0,88.002596 C0,90.7626946 2.14266246,93 4.785397,93 L11.9697298,93 C11.9697298,84.7148899 18.3998867,77.9998584 26.3335141,77.9998584 C34.2671415,77.9998584 40.6972984,84.7148899 40.6972984,93 L79,93 L79,63 L0,63 Z" id="Shape" fill="#007794"></path>
+                                <g id="Group" transform="translate(20.000000, 87.000000)" fill="#B2B2B2">
+                                    <path d="M9.59634181,5.06694444 C9.59634181,7.77638889 7.47601695,9.97111111 4.85841808,9.97111111 C2.24081921,9.97111111 0.12049435,7.77638889 0.12049435,5.06694444 C0.12049435,2.3575 2.24081921,0.162777778 4.85841808,0.162777778 C7.47601695,0.162777778 9.59634181,2.3575 9.59634181,5.06694444" id="Shape"></path>
+                                    <path d="M94.879774,5.06694444 C94.879774,7.77638889 92.7594492,9.97111111 90.1418503,9.97111111 C87.5242514,9.97111111 85.4039266,7.77638889 85.4039266,5.06694444 C85.4039266,2.3575 87.5242514,0.162777778 90.1418503,0.162777778 C92.7594492,0.162777778 94.879774,2.3575 94.879774,5.06694444" id="Shape"></path>
+                                </g>
+                                <path d="M105.060582,24.9530375 C103.496218,23.0856717 101.124161,22 98.618302,22 L93,22 L93,34.1896624 C93,36.2947212 94.7871851,38 96.9939583,38 L116,38 L105.060582,24.9530375 Z" id="Shape" fill="#E6E6E6"></path>
+                                <path d="M43.9471364,28 C43.0555068,28 42.3327858,27.2526408 42.3327858,26.3299822 L42.3327858,19.6700178 C42.3327858,18.7476424 41.6103386,18 40.7184352,18 L34.2804697,18 C33.3888401,18 32.6661192,18.7473592 32.6661192,19.6700178 L32.6661192,26.3299822 C32.6661192,27.2523576 31.9436719,28 31.0517686,28 L24.6143506,28 C23.722721,28 23,28.7473592 23,29.6700178 L23,36.3299822 C23,37.2523576 23.7224472,38 24.6143506,38 L31.0523161,38 C31.9439457,38 32.6666667,38.7473592 32.6666667,39.6700178 L32.6666667,46.3299822 C32.6666667,47.2523576 33.3891139,48 34.2810172,48 L40.7189828,48 C41.6106124,48 42.3333333,47.2526408 42.3333333,46.3299822 L42.3333333,39.6700178 C42.3333333,38.7476424 43.0557805,38 43.9476839,38 L50.3856494,38 C51.277279,38 52,37.2526408 52,36.3299822 L52,29.6700178 C51.9994525,28.7473592 51.2770053,28 50.3851019,28 L43.9471364,28 Z" id="Shape" fill="#62BEDD"></path>
+                                <path d="M139,63.9997734 L139,60 L97.4445521,60 C96.0951749,60 95,60.8939737 95,62 C95,63.1060263 96.0951749,64 97.4445521,64 L139,64 L139,63.9997734 Z" id="Shape" fill="#007794"></path>
+                            </g>
+                        </g>
+                    </defs>
+                    <image xlink:href="img/Background.png" x="0" y="0" height="390" width="2000"></image>
+                </svg>
+    </div>    
+    <div id="average-time-chart"></div>    
+    <div id="active-ambulances-chart"></div>    
+</div>
+<div id="scatter-vis"></div>
+<div id="fractions-vis"></div>
+<div id="changes-vis"></div>
 
 
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
-<script src="../../static/vendor/d3/d3.v4.min.js"></script>
 <script src="../../static/js/first-watch.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>

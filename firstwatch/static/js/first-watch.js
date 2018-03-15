@@ -1,32 +1,50 @@
-// d3.select("select#hospital")
-//     .on("change", function(d) {
-//         const selectedHospital = d3.select(this).property("value")
-//
-//         d3.json("http://127.0.0.1:5000/hospital-data/" + selectedHospital + "/2018-02-12", function(err, json) {
-//             console.log("success")
-//             console.log(err)
-//             console.log(json)
-//         })
-//         console.log(selectedHospital)
-//     })
+var dateParse = d3.timeParse("%Y-%m-%d %H:%M:%S")
 
+d3.select("#in-county-hospitals")
+    .selectAll("option")
+    .data(inCountyHospitals)
+    .enter()
+    .append("option")
+    .attr("value", function(d) { return d })
+    .attr("text", function(d) { return d })
+var screenWidth = window.innerWidth
+    || document.documentElement.clientWidth
+    || document.body.clientWidth;
 
-// changes chart
+var defaultWidth = 2000
 
-console.log("scatterData", scatterData)
-console.log("changesData", changesData)
-console.log("fractionsData", fractionsData)
-console.log("eventData", eventData)
+// needed because of background hospital image
+var scaleFactor = screenWidth / defaultWidth
 
+d3.select("#replay-vis")
+    .style("zoom", scaleFactor)
+    .style("-moz-transform", "scale(" + scaleFactor + ")")
 
-var changesSVG = d3.select("#changes")
-    .append("svg")
-    .attr("height", 400)
-    .attr("width", 600)
+d3.select("#out-of-county-hospitals")
+    .selectAll("option")
+    .data(outOfCountyHospitals)
+    .enter()
+    .append("option")
+    .attr("value", function(d) { return d })
+    .attr("text", function(d) { return d })
 
+d3.select("#facility-selector")
+    .on('change', setDateAndFacility)
 
+function setDateAndFacility() {
+    // var selectedDate = d3.select('#date-selector').property('value'); 
+    var selectedDate = "02-12-2018"
+    var selectedFacility = d3.select('#facility-selector').property('value');
+    window.location.href = '/hospital-data/' + selectedFacility + '/' + selectedDate 
+}
 
-// scatterplot
-
-
-// fraction chart
+var scatterVisData = []
+for (var i = 0; i < scatterData.times.length; i++) {
+    var point = {}
+    point.time = dateParse(scatterData.times[i])
+    point.minutesToTransfer = scatterData.transfer_times[i]
+    scatterVisData.push(point)
+}
+drawScatterVis(scatterVisData, d3.select("#scatter-vis"))
+drawChangesVis(changesData, d3.select("#changes-vis"))
+drawFractionsVis(fractionsData, d3.select("#fractions-vis"))

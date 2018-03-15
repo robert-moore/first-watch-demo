@@ -1,6 +1,6 @@
 function drawScatterVis(data, selection) {
     console.log("scatter data", data)
-    var margin = { top: 20, bottom: 40, left: 30, right: 30}
+    var margin = { top: 20, bottom: 40, left: 50, right: 50}
     var height = 400    
     var width = screenWidth - margin.right - margin.left
 
@@ -35,4 +35,30 @@ function drawScatterVis(data, selection) {
                 return "steelblue"
             }
         })
+
+        // Add the x Axis
+  g.append("g")
+  .attr("transform", "translate(0," + height + ")")
+  .call(d3.axisBottom(timeScale));
+
+// text label for the x axis
+g.append("text")             
+  .attr("transform",
+        "translate(" + (width/2) + " ," + 
+                       (height + margin.top + 20) + ")")
+  .style("text-anchor", "middle")
+  .text("Date");
+
+// Add the y Axis
+g.append("g")
+  .call(d3.axisLeft(yScale));
+
+// text label for the y axis
+g.append("text")
+  .attr("transform", "rotate(-90)")
+  .attr("y", 0 - margin.left)
+  .attr("x",0 - (height / 2))
+  .attr("dy", "1em")
+  .style("text-anchor", "middle")
+  .text("Value");      
 }

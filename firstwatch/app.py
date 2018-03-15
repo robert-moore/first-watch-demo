@@ -1,6 +1,6 @@
 # import some stuff here
 from flask import Flask
-from flask import render_template, request
+from flask import render_template, request, jsonify
 
 # modeling packages
 import pandas as pd
@@ -41,7 +41,7 @@ def hospital_data(hospital, date):
     #create output dictionary for viz
     data_dict = fw.df_to_dict(dft)
     print(data_dict)
-    return "hi"
+    return jsonify(data_dict)
 
 
 # script initialization

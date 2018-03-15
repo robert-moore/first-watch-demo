@@ -36,7 +36,7 @@ def hospital_data(hospital="PES", date="02-12-2018"):
 
     #get last N events for scatter plot
     last_n_events = fw.last_N_events_dict(df,hospital=hospital,end_date=date,days=7)
-    scatter_dict = fw.events_to_dict(last_n_events)
+    scatter_dict = fw.last_N_events_dict(last_n_events)
 
     # change the data to be 'ref hospital' vs. 'other'
     dfh = fw.select_hospital(df,hospital)

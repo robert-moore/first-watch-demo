@@ -33,6 +33,9 @@ def hospitalreport():
 @app.route('/hospital-data/<string:hospital>/<string:date>')
 def hospital_data(hospital="PES", date="02-12-2018"):
     global df
+    #get list of in county and out of county hospitals
+    in_county_hospitals = df[df.in_county == 1].hospital.unique().tolist()
+    out_county_hospitals = df[df.in_county == 0].hospital.unique().tolist()
 
     #get last N events for scatter plot
     last_n_events = fw.last_N_events_dict(df,hospital=hospital,end_date=date,days=7)
@@ -56,7 +59,9 @@ def hospital_data(hospital="PES", date="02-12-2018"):
                            date=date,
                            scatter=last_n_events,
                            changes=data_dict["changes"],
-                           eventdata=event_data
+                           eventdata=event_data,
+                           in_county_hospitals = in_county_hospitals,
+                           out_county_hospitals = out_county_hospitals
                            )
 
 

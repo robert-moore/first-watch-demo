@@ -31,17 +31,26 @@ def hospitalreport():
     return render_template("startertemplate.html",dates=dates)
 
 @app.route('/hospital-data/<string:hospital>/<string:date>')
-def hospital_data(hospital, date):
+def hospital_data(hospital="PES", date="02-12-2018"):
     global df
+
+    #get last N events for scatter plot
+    last_n_events = fw.data_last_N_events(df, 200)
 
     # change the data to be 'ref hospital' vs. 'other'
     dfh = fw.select_hospital(df,hospital)
-    # compute trans_df 
+    # compute trans_df
     dft = fw.data_transfers_compare(dfh,date)
     #create output dictionary for viz
     data_dict = fw.df_to_dict(dft)
     print(data_dict)
-    return jsonify(data_dict)
+    return render_template("first-watch.html",
+                           fractions=data_dict["fraction_data"],
+                           hospital=hospital,
+                           date=date,
+                           scatter=last_n_events,
+                           changes=data_dict["changes"]
+                           )
 
 
 # script initialization

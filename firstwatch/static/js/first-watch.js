@@ -13,6 +13,12 @@
 
 // changes chart
 
+console.log("scatterData", scatterData)
+console.log("changesData", changesData)
+console.log("fractionsData", fractionsData)
+console.log("eventData", eventData)
+
+
 var changesSVG = d3.select("#changes")
     .append("svg")
     .attr("height", 400)

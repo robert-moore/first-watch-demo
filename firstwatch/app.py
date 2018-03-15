@@ -8,7 +8,7 @@ import numpy as np
 import firstwatch_utils as fw
 
 global df
-df = pd.read_csv('data/transfers_cleaned_2017-18.csv')
+df = pd.read_csv('data/transfers_cleaned_2017-18.csv',index_col=0)
 
 # create the flask object
 app = Flask(__name__)
@@ -36,12 +36,17 @@ def hospital_data(hospital="PES", date="02-12-2018"):
 
     #get last N events for scatter plot
     last_n_events = fw.last_N_events_dict(df,hospital=hospital,end_date=date,days=7)
-    scatter_dict = fw.last_N_events_dict(last_n_events)
 
     # change the data to be 'ref hospital' vs. 'other'
     dfh = fw.select_hospital(df,hospital)
     # compute trans_df
     dft = fw.data_transfers_compare(dfh,date)
+
+    event_data = fw.select_hospital_events(df, hospital=hospital,date=date).to_dict(orient='records')
+    print(event_data)
+    print('_______')
+    # print(event_data.to_dict())
+
     #create output dictionary for viz
     data_dict = fw.df_to_dict(dft)
     print(data_dict)
@@ -50,7 +55,8 @@ def hospital_data(hospital="PES", date="02-12-2018"):
                            hospital=hospital,
                            date=date,
                            scatter=last_n_events,
-                           changes=data_dict["changes"]
+                           changes=data_dict["changes"],
+                           eventdata=event_data
                            )
 
 

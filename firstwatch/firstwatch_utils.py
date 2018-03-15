@@ -2,6 +2,19 @@ import os
 import pandas as pd
 import numpy as np
 
+
+def select_hospital_events(df,hospital,date):
+
+    dfh = df.copy()
+
+    selector = ((dfh.hospital == hospital) &
+                (dfh.date_day == date))
+
+    cols = ["Enroute Time", "At Scene Time", "Depart Scene", "At Hosp", "Transfer of Care Time", "Avail Time"]
+    dfh = dfh[selector][cols]
+
+    return dfh
+
 def select_hospital(df,hospital):
     '''
     select out specific hospital
@@ -24,7 +37,7 @@ def last_N_events_dict(df,hospital,end_date,days=7):
     
     d = df[((df.hospital == hospital) & (df.date_day >= st) & (df.date_day <=en))]
     
-    d_dict = {'transfer_times':d.toc_mins.values,'times': d.date.values}
+    d_dict = {'transfer_times':d.toc_mins.values.tolist(),'times': d.date.values.tolist()}
     
 
     return d_dict

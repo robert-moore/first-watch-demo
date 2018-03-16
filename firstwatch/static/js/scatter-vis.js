@@ -9,8 +9,8 @@ function drawScatterVis(data, selection) {
         .range([0, width])
 
     var yScale = d3.scaleLinear()
-        .domain(d3.extent(data.map(function(d) { return d.minutesToTransfer })))
-        .range([height, 0])
+        .domain([0,60])
+        .range([height,0])
 
     // scatter vis
     var svg = selection
@@ -36,29 +36,29 @@ function drawScatterVis(data, selection) {
             }
         })
 
-        // Add the x Axis
-  g.append("g")
-  .attr("transform", "translate(0," + height + ")")
-  .call(d3.axisBottom(timeScale));
+    // Add the x Axis
+    g.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(timeScale));
 
-// text label for the x axis
-g.append("text")             
-  .attr("transform",
-        "translate(" + (width/2) + " ," + 
-                       (height + margin.top + 20) + ")")
-  .style("text-anchor", "middle")
-  .text("Date");
+    // text label for the x axis
+    g.append("text")             
+    .attr("transform",
+            "translate(" + (width/2) + " ," + 
+                        (height + margin.top + 20) + ")")
+    .style("text-anchor", "middle")
+    .text("Date");
 
-// Add the y Axis
-g.append("g")
-  .call(d3.axisLeft(yScale));
+    // Add the y Axis
+    g.append("g")
+    .call(d3.axisLeft(yScale));
 
-// text label for the y axis
-g.append("text")
-  .attr("transform", "rotate(-90)")
-  .attr("y", 0 - margin.left)
-  .attr("x",0 - (height / 2))
-  .attr("dy", "1em")
-  .style("text-anchor", "middle")
-  .text("Value");      
+    // text label for the y axis
+    g.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 0 - margin.left)
+    .attr("x",0 - (height / 2))
+    .attr("dy", "1em")
+    .style("text-anchor", "middle")
+    .text("Transfer time (mins)");      
 }

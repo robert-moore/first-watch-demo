@@ -1,6 +1,6 @@
 function drawScatterVis(data, selection) {
     console.log("scatter data", data)
-    var margin = { top: 20, bottom: 40, left: 50, right: 50}
+    var margin = { top: 40, bottom: 40, left: 50, right: 50}
     var height = 400    
     var width = screenWidth - margin.right - margin.left
 

@@ -39,7 +39,8 @@ function barChart() {
                 var intervalHighlightText = intervalHighlightG.append('text')
                     .attr('y', 15)
                     .attr('text-anchor', 'end')
-                    .attr('font-size', 12)
+                    .attr('font-size', 16)
+                    .style("font-weight", "bold")
                     .attr('fill', '#444444');
     
                 // var x = d3.scaleBand().rangeRound([0, width]);

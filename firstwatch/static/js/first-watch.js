@@ -44,6 +44,8 @@ for (var i = 0; i < scatterData.times.length; i++) {
     point.minutesToTransfer = scatterData.transfer_times[i]
     scatterVisData.push(point)
 }
+
+drawEventVis(eventData, d3.select("#replay-vis"), hospital)
 drawScatterVis(scatterVisData, d3.select("#scatter-vis"))
 drawChangesVis(changesData, d3.select("#changes-vis"), hospital)
 drawFractionsVis(fractionsData, d3.select("#fractions-vis"), hospital)

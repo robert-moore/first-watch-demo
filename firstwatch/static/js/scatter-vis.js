@@ -21,14 +21,32 @@ function drawScatterVis(data, selection) {
     var g = svg.append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
+    g.append("line")
+        .attr("x1", 0)
+        .attr("x2", width)
+        .attr("y1", yScale(20))
+        .attr("y2", yScale(20))
+        .attr("stroke", "#999")
+        .attr("stroke-width", 2)
+        .attr("stroke-dasharray", "5 8")
+
     g.selectAll("circle.point")
         .data(data)
         .enter()
         .append("circle")
+        .attr("fill-opacity", 0.6)
+        .attr("stroke-opacity", 0.9)
         .attr("cx", function(d) { return timeScale(d.time)})
         .attr("cy", function(d) { return yScale(d.minutesToTransfer)})
         .attr("r", 10)
         .attr("fill", function(d) {
+            if (d.minutesToTransfer > 20 ) {
+                return "crimson"
+            } else {
+                return "steelblue"
+            }
+        })
+        .attr("stroke", function(d) {
             if (d.minutesToTransfer > 20 ) {
                 return "crimson"
             } else {

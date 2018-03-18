@@ -45,8 +45,8 @@ for (var i = 0; i < scatterData.times.length; i++) {
     scatterVisData.push(point)
 }
 drawScatterVis(scatterVisData, d3.select("#scatter-vis"))
-drawChangesVis(changesData, d3.select("#changes-vis"))
-drawFractionsVis(fractionsData, d3.select("#fractions-vis"))
+drawChangesVis(changesData, d3.select("#changes-vis"), hospital)
+drawFractionsVis(fractionsData, d3.select("#fractions-vis"), hospital)
 
 function setDateAndFacility() {
     // var selectedDate = d3.select('#date-selector').property('value'); 
